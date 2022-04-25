@@ -1,0 +1,259 @@
+<?php
+
+namespace Phpsa\FilamentCms\Resources\Contracts;
+
+use Illuminate\Support\Str;
+use RalphJSmit\Filament\SEO\SEO;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Filters\MultiSelectFilter;
+
+trait IsCmsResource
+{
+    protected static bool $hasSlug = true;
+
+    protected static bool $hasSeo = true;
+
+    protected static bool $hasParent = true;
+
+    protected static bool $hasMeta = true;
+
+    protected static bool $isPublishable = true;
+
+    protected static bool $tabbedLayout = false;
+
+    protected static bool $disableSidebar = false;
+
+
+    public static function customFields(): array
+    {
+        return [];
+    }
+
+    public static function customMeta(): array
+    {
+        return [];
+    }
+
+    public static function customCards(): array
+    {
+        return [];
+    }
+
+    public static function customSidebarCards(): array
+    {
+        return [];
+    }
+
+    public static function customTableColumns(): array
+    {
+        return [];
+    }
+
+    public static function customTableFilters(): array
+    {
+        return [];
+    }
+
+    public static function customTabs(): array
+    {
+        return [];
+    }
+
+    public static function formFieldEditor(string $field, ?string $label = null): Field
+    {
+        $editorConfig = config('filament-cms.editor');
+
+        /** @var \Filament\Forms\Components\RichEditor $editor*/
+        $editor = $editorConfig['class']::make($field)
+            ->columnSpan(2)
+            ->label($label)
+            ->disableAllToolbarButtons($editorConfig['disableAllToolbarButtons'])
+            ->enableToolbarButtons($editorConfig['enabledToolbarButtons'])
+            ->disableToolbarButtons($editorConfig['disableToolbarButtons']);
+
+        return $editor;
+    }
+
+    public static function formFieldName(string $field = 'name'): TextInput
+    {
+        $field =  TextInput::make($field)
+                            ->required()
+                            ->maxLength(255);
+        return static::$hasSlug
+        ? $field
+            ->reactive()
+            ->afterStateUpdated(function (\Closure $set, $state, $record) {
+                if ($record === null) {
+                    $set('slug', Str::slug($state));
+                }
+            })
+        : $field;
+    }
+
+    public static function formFieldSlug(): ?TextInput
+    {
+        return static::$hasSlug
+        ? TextInput::make('slug')
+            ->required()
+            ->maxLength(255)
+            ->label(strval(__('filament-cms::filament-cms.form.field.slug')))
+        : null;
+    }
+
+    public static function formFieldParent(): ?Select
+    {
+        return static::$hasParent
+        ?  Select::make('parent_id')
+            ->options(fn($record) => static::getModel()::where('id', '!=', $record?->id)->whereNamespace(
+                get_called_class()
+            )
+            ->pluck('name', 'id'))
+            ->label(strval(__('filament-cms::filament-cms.form.field.parent')))
+        : null;
+    }
+
+    protected static function mergeSections(array $default, array ...$extras): array
+    {
+        return(collect($default))->merge(
+            collect($extras)->flatten(1)
+        )->filter()->toArray();
+    }
+
+
+    public static function formMetaSection(): ?Section
+    {
+        return static::$hasMeta
+        ? Section::make(strval(__('filament-cms::filament-cms.form.section.meta')))
+            ->schema(
+                static::mergeSections(
+                    [
+                        static::formFieldParent()
+                    ],
+                    static::publishingFields(),
+                    static::customMeta()
+                )
+            )
+            ->collapsible()
+        : null;
+    }
+
+    public static function publishingFields(): array
+    {
+        if (static::$isPublishable === false) {
+            return [];
+        }
+
+        $status = config('filament-cms.statusEnum');
+
+        $isPasswordProtected = $status::passwordProtected();
+
+        return [
+            Select::make('status')
+                ->label(strval(__('filament-cms::filament-cms.form.field.status')))
+                ->default($status::default())
+                ->required()
+                ->reactive()
+                ->options($status::toArray()),
+            $isPasswordProtected
+                ? TextInput::make('security')
+                    ->label(strval(__('filament-cms::filament-cms.form.field.password')))
+                    ->reactive()
+                    ->required()
+                    ->visible(
+                        fn (\Closure $get): bool => $get('status') === $isPasswordProtected
+                    )
+                : null,
+        ];
+    }
+
+    public static function filterPublishable(): array
+    {
+        if (static::$isPublishable === false) {
+            return [];
+        }
+
+        $status = config('filament-cms.statusEnum');
+
+        return [
+            MultiSelectFilter::make('status')
+                ->label(strval(__('filament-cms::filament-cms.table.filter.status')))
+                ->options($status::toArray()),
+        ];
+    }
+
+    public static function tablePublishedColumn(): array
+    {
+        if (static::$isPublishable === false) {
+            return [];
+        }
+
+        $status = config('filament-cms.statusEnum');
+
+        return [
+            BadgeColumn::make('status')
+                ->label(strval(__('filament-cms::filament-cms.table.column.status')))
+                ->enum($status::toArray())
+                ->colors(array_flip($status::colors()))
+                ->sortable()
+        ];
+    }
+
+    public static function generateFormGeneralSection(): array
+    {
+        return static::mergeSections(
+            [
+                Card::make()->columns(2)->schema(
+                    static::mergeSections(
+                        [
+                            static::formFieldName('name')
+                                                    ->label(strval(__('filament-cms::filament-cms.form.field.name'))),
+                            static::formFieldSlug()
+                        ],
+                        static::customFields()
+                    )
+                ),
+
+            ],
+            static::customCards(),
+        );
+    }
+
+    public static function generateFormSidebar(): array
+    {
+        return static::mergeSections(
+            [
+                static::$hasMeta ? Section::make(strval(__('filament-cms::filament-cms.form.section.meta')))
+                            ->schema(
+                                static::mergeSections(
+                                    [
+                                        static::formFieldParent()
+                                    ],
+                                    static::publishingFields(),
+                                    static::customMeta()
+                                )
+                            )
+                            ->collapsible() : null,
+
+            ],
+            static::customSidebarCards(),
+            [static::$hasSeo && ! static::$tabbedLayout
+                        ? Section::make(strval(__('filament-cms::filament-cms.form.section.seo')))
+                            ->schema([
+                                SEO::make(),
+                            ])
+                            ->collapsible()
+                        : null
+            ],
+        );
+    }
+
+    public static function getUserTimezone(): string
+    {
+        return config('request.user.timezone', config('app.timezone', 'UTC'));
+    }
+}

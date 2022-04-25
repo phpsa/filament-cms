@@ -1,0 +1,81 @@
+<?php
+
+namespace {{ namespace }};
+
+use Phpsa\FilamentCms\Resources\Resource;
+use App\Filament\Resources\{{ resource }}\Pages;
+use App\Filament\Resources\{{ resource }}\RelationManagers;
+
+
+class {{ resourceClass }} extends Resource
+{
+    protected static ?string $navigationIcon = 'heroicon-o-collection';
+
+    protected static bool $hasSlug = true;
+
+    protected static bool $hasSeo = true;
+
+    protected static bool $hasParent = true;
+
+    protected static bool $hasMeta = true;
+
+    protected static bool $isPublishable = true;
+
+    protected static bool $tabbedLayout = false;
+
+    public static function customFields(): array
+    {
+        return [
+            static::formFieldEditor('node.content')
+                ->label(__('filament-cms::filament-cms.page.field.content')),
+        ];
+    }
+
+    public static function customMeta(): array
+    {
+        return [];
+    }
+
+    public static function customCards(): array
+    {
+        return [];
+    }
+
+    public static function customSidebarCards(): array
+    {
+        return [];
+    }
+
+    public static function customTableColumns(): array
+    {
+        return [];
+    }
+
+    public static function customTableFilters(): array
+    {
+        return [];
+    }
+
+    public static function customTabs(): array
+    {
+        return [];
+    }
+
+
+    public static function getPages(): array
+    {
+        return [
+{{ pages }}
+        ];
+    }
+
+    public static function getLabel(): string
+    {
+        return __('{{ label }}');
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return __('{{ pluralLabel }}');
+    }
+}
