@@ -60,17 +60,6 @@ class FilamentCmsProvider extends PluginServiceProvider
             )
         );
 
-        Column::macro(
-            'fromNodeState',
-            /** @phpstan-ignore-next-line */
-            fn() => $this->getStateUsing(
-                function (Column $column, $record) {
-                    $col = Str::of($column->getName())->replace(["nodes.","node."], "")->value();
-                    return $record->node($col);
-                }
-            )
-        );
-
         self::addResourceToNavigation('Cms Page', PagesResource::class);
         self::addResourceToNavigation('Cms Category', CategoriesResource::class);
         self::addResourceToNavigation('Cms BlogPost', BlogPostResource::class);

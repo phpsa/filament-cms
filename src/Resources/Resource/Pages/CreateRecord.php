@@ -10,7 +10,6 @@ use Phpsa\FilamentCms\Resources\Resource\Pages\Contract\HasNode;
 
 class CreateRecord extends FilamentCreateRecord
 {
-    use HasNode;
     use HasLocalisedDates;
 
     protected function handleRecordCreation(array $data): Model
@@ -21,10 +20,7 @@ class CreateRecord extends FilamentCreateRecord
         $data['user_id'] ??= Filament::auth()->user()?->id;
 
         $data['namespace'] = static::getResource();
-        $record =  static::getModel()::create($data);
 
-        $this->saveNodes($data['node'] ?? [], $record);
-
-        return $record;
+        return parent::handleRecordCreation($data);
     }
 }

@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Phpsa\FilamentCms\Models\CmsContentNodes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +20,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Phpsa\FilamentCms\Enum\StatusEnum;
 
 /**
  * Phpsa\FilamentCms\Models\CmsContentPages
@@ -40,8 +40,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property-read int|null $children_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|Media[] $media
  * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection<string, CmsContentNodes>|CmsContentNodes[] $nodes
- * @property-read int|null $nodes_count
  * @property-read \Illuminate\Database\Eloquent\Collection|CmsContentPages[] $parents
  * @property-read int|null $parents_count
  * @property-read \RalphJSmit\Laravel\SEO\Models\SEO|null $seo
@@ -81,18 +79,22 @@ class CmsContentPages extends Model implements HasMedia
 
     protected $fillable = [
         'parent_id',
+        'user_id',
         'namespace',
         'name',
         'slug',
-        'user_id',
         'status',
-        'security'
+        'security',
+        'nodes',
+        'published_at',
+        'expired_at',
     ];
 
-    public function nodes(): HasMany
-    {
-        return $this->hasMany(CmsContentNodes::class);
-    }
+    protected $casts = [
+        'nodes'        => 'json',
+        'published_at' => 'datetime',
+        'expired_at'   => 'datetime'
+    ];
 
     public function registerMediaConversions(Media $media = null): void
     {
@@ -109,10 +111,6 @@ class CmsContentPages extends Model implements HasMedia
             );
     }
 
-    public function relations(): HasManyThrough
-    {
-        return $this->hasManyThrough(CmsContentPages::class, CmsContentNodes::class, 'cms_content_pages_id', 'id', 'id', 'content');
-    }
 
     public function parents(): HasMany
     {
@@ -131,22 +129,13 @@ class CmsContentPages extends Model implements HasMedia
     {
          /** @phpstan-ignore-next-line */
         return $this->resolveRouteBindingQuery($this, $value, $field)
-            ->with(['nodes','tagsTranslated','children','parents'])
+            ->with(['tagsTranslated','children','parents'])
             ->first();
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function node(string $key)
+    public function node(string $key): mixed
     {
-        $val = $this->nodes->get($key)?->content;
-         /** @phpstan-ignore-next-line */
-        return json_decode($val) ?? $val;
+        return $this->nodes[$key] ?? null;
     }
 
     /**
@@ -161,9 +150,10 @@ class CmsContentPages extends Model implements HasMedia
         return collect($keys)->mapWithKeys(fn($key) => [$key => $this->relatedNode($key)]);
     }
 
+
     public function relatedNode(string $key): ?CmsContentPages
     {
-        return CmsContentPages::with(['nodes','tagsTranslated','children','parents'])
+        return CmsContentPages::with(['tagsTranslated','children','parents'])
             ->whereKey($this->node($key))
             ->first();
     }
@@ -181,49 +171,9 @@ class CmsContentPages extends Model implements HasMedia
     public function scopeWithRelated(Builder $builder, string $key, $value, ?string $type = null): Builder
     {
 
-        return $builder->whereHas(
-            'nodes',
-            fn($query) => $query->with('pages')
-                    ->whereNode($key)
-                    ->whereContent($value)
-        )->when(
+        return $builder->whereJsonContains("nodes->{$key}", $value)->when(
             $type,
             fn($query) => $query->whereNamespace($type)
         )->with(['nodes','tagsTranslated','children','parents']);
-    }
-
-
-    public function mapRelatedNodes(): Collection
-    {
-        return $this->nodes->mapWithKeys(fn($row) => [$row->node => $row]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRelationValue($key)
-    {
-
-        if (! $this->isRelation($key) && isset($this->nodes)) {
-            try {
-                if ($this->nodes->has($key)) {
-                    //  dd($key, $this->nodes->get($key));
-                    return $this->node($key);
-                }
-            } catch (\Throwable $e) {
-                dd($e, $key);
-            }
-            return;
-        }
-        return parent::getRelationValue($key);
-    }
-
-    public function setRelation($relation, $value)
-    {
-        $this->relations[$relation] = $relation === 'nodes'
-        ? $value->mapWithKeys(fn($row) => [$row->node => $row])
-        : $value;
-
-        return $this;
     }
 }

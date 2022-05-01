@@ -10,6 +10,6 @@ class EditBlogPost extends EditRecord
     protected static string $resource = BlogPostResource::class;
 
     protected static array $dateColumns = [
-        'node.published_at'
+        'published_at'
     ];
 }

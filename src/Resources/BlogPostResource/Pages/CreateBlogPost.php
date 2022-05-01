@@ -8,4 +8,8 @@ use Phpsa\FilamentCms\Resources\Resource\Pages\CreateRecord;
 class CreateBlogPost extends CreateRecord
 {
     protected static string $resource = BlogPostResource::class;
+
+    protected static array $dateColumns = [
+        'published_at'
+    ];
 }
