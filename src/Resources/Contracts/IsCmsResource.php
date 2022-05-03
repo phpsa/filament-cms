@@ -11,6 +11,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\MultiSelectFilter;
+use Phpsa\FilamentCms\Resources\Resource\Pages\EditRecord;
 
 trait IsCmsResource
 {
@@ -87,10 +88,12 @@ trait IsCmsResource
         return static::$hasSlug
         ? $field
             ->reactive()
-            ->afterStateUpdated(function (\Closure $set, $state, $record) {
-                if ($record === null) {
-                    $set('slug', Str::slug($state));
+            ->afterStateUpdated(function ($livewire, \Closure $set, ?string $state): void {
+
+                if ($livewire instanceof EditRecord) {
+                    return;
                 }
+                $set('slug', str($state)->slug());
             })
         : $field;
     }
@@ -100,6 +103,7 @@ trait IsCmsResource
         return static::$hasSlug
         ? TextInput::make('slug')
             ->required()
+            ->unique(ignoreRecord: true, callback: fn($rule) => $rule->where('namespace', get_called_class()))
             ->maxLength(255)
             ->label(strval(__('filament-cms::filament-cms.form.field.slug')))
         : null;
