@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/phpsa/filament-cms/compare/v2.0.0...v2.0.1) (2022-05-21)
+
+
+### Bug Fixes
+
+* block builder updates ([d5ae745](https://github.com/phpsa/filament-cms/commit/d5ae7455aa404ac94b1c24945b86d96f9b9ff60a))
+
 # [2.0.0](https://github.com/phpsa/filament-cms/compare/v1.0.0...v2.0.0) (2022-05-03)
 
 
