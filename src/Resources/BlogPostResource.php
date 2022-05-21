@@ -2,22 +2,27 @@
 
 namespace Phpsa\FilamentCms\Resources;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Phpsa\FilamentCms\Resources\Resource;
 use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\DateTimePicker;
+use Phpsa\FilamentCms\Models\CmsContentPages;
 use Filament\Forms\Components\BelongsToSelect;
 use Filament\Forms\Components\SpatieTagsInput;
+use Phpsa\FilamentCms\Components\FeaturedImage;
 use Filament\Forms\Components\BelongsToManyMultiSelect;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
 use Phpsa\FilamentCms\Resources\BlogPostResource\Pages;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Phpsa\FilamentCms\Resources\BlogPostResource\RelationManagers;
 
 class BlogPostResource extends Resource
@@ -45,7 +50,7 @@ class BlogPostResource extends Resource
                             ->minLength(50)
                             ->maxLength(1000)
                             ->columnSpan(2),
-            static::formFieldEditor('nodes.content')
+            static::formPageBuilder('nodes.content')
                 ->label(strval(__('filament-cms::filament-cms.page.field.content'))),
 
         ];
@@ -62,7 +67,30 @@ class BlogPostResource extends Resource
                 ->fromCmsResource(CategoriesResource::class)
                 ->label(strval(__('filament-cms::filament-cms.form.field.category')))
                 ->searchable()
+                ->createOptionForm([
+                    TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->reactive()
+                    ->afterStateUpdated(function (\Closure $set, ?string $state): void {
+
+                        $set('slug', str($state)->slug());
+                    })
+                   ,
+                    TextInput::make('slug')
+                    ->required()
+                    ->unique(callback: fn($rule) => $rule->where('namespace', CategoriesResource::class))
+                    ->maxLength(255)
+                    ->label(strval(__('filament-cms::filament-cms.form.field.slug'))),
+                    Hidden::make('user_id')->default(Filament::auth()->user()?->id),
+                    Hidden::make('namespace')->default(CategoriesResource::class),
+                    Hidden::make('status')->default(config('filament-cms.statusEnum')::default())
+                ])
+                ->createOptionUsing(
+                    fn(array $data) => CmsContentPages::create($data)->getKey()
+                )
                 ->required(),
+
             SpatieTagsInput::make('tags')
             ->type('blogTags')
             ->label(strval(__('filament-cms::filament-cms.form.field.tags')))
@@ -74,15 +102,15 @@ class BlogPostResource extends Resource
     {
         return [
             Tab::make(strval(__('filament-cms::filament-cms.form.section.blog.gallery')))
-                ->schema([
-                    SpatieMediaLibraryFileUpload::make('gallery_images')
-                        ->disableLabel(true)
-                        ->directory('blog')
-                        ->multiple()
-                        ->collection('gallery')
-                        ->enableReordering()
-                        ->panelLayout('grid')
-                ])
+            ->schema([
+                SpatieMediaLibraryFileUpload::make('gallery_images')
+                    ->disableLabel(true)
+                    ->directory('blog')
+                    ->multiple()
+                    ->collection('gallery')
+                    ->enableReordering()
+                    ->panelLayout('grid')
+            ])
         ];
     }
 
@@ -90,12 +118,7 @@ class BlogPostResource extends Resource
     public static function customSidebarCards(): array
     {
         return [
-            Section::make(strval(__('filament-cms::filament-cms.form.section.blog.featured')))
-
-                ->schema([
-                    SpatieMediaLibraryFileUpload::make('feature_image')->directory('blog')->disableLabel(true),
-
-                ])
+            FeaturedImage::make('featured_image'),
         ];
     }
 
@@ -106,9 +129,9 @@ class BlogPostResource extends Resource
             parent::tablePublishedColumn(),
             [
                 TextColumn::make('published_at')
-                    ->label(strval(__('filament-cms::filament-cms.table.column.published')))
-                    ->dateTime(timezone: static::getUserTimezone())
-                    ->sortable(),
+                ->label(strval(__('filament-cms::filament-cms.table.column.published')))
+                ->dateTime(timezone: static::getUserTimezone())
+                ->sortable(),
             ]
         );
     }

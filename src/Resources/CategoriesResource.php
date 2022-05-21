@@ -3,6 +3,7 @@
 namespace Phpsa\FilamentCms\Resources;
 
 use Phpsa\FilamentCms\Resources\Resource;
+use Phpsa\FilamentCms\Components\FeaturedImage;
 use Phpsa\FilamentCms\Resources\CategoriesResource\Pages;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -11,9 +12,15 @@ class CategoriesResource extends Resource
     public static function customFields(): array
     {
         return [
-            static::formFieldEditor('nodes.content')
+            static::formPageBuilder('nodes.content')
                 ->label(strval(__('filament-cms::filament-cms.page.field.content'))),
-            SpatieMediaLibraryFileUpload::make('category_image')->directory('blog')
+        ];
+    }
+
+    public static function customSidebarCards(): array
+    {
+        return [
+            FeaturedImage::make('category_image'),
         ];
     }
 

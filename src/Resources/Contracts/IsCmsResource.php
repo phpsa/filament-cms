@@ -2,6 +2,8 @@
 
 namespace Phpsa\FilamentCms\Resources\Contracts;
 
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 use Illuminate\Support\Str;
 use RalphJSmit\Filament\SEO\SEO;
 use Filament\Forms\Components\Card;
@@ -11,6 +13,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\MultiSelectFilter;
+use Phpsa\FilamentCms\Components\RichTextEditor;
 use Phpsa\FilamentCms\Resources\Resource\Pages\EditRecord;
 
 trait IsCmsResource
@@ -67,17 +70,16 @@ trait IsCmsResource
 
     public static function formFieldEditor(string $field, ?string $label = null): Field
     {
-        $editorConfig = config('filament-cms.editor');
+        return RichTextEditor::make($field)->label($label);
+    }
 
-        /** @var \Filament\Forms\Components\RichEditor $editor*/
-        $editor = $editorConfig['class']::make($field)
-            ->columnSpan(2)
-            ->label($label)
-            ->disableAllToolbarButtons($editorConfig['disableAllToolbarButtons'])
-            ->enableToolbarButtons($editorConfig['enabledToolbarButtons'])
-            ->disableToolbarButtons($editorConfig['disableToolbarButtons']);
 
-        return $editor;
+    public static function formPageBuilder(string $field): Builder
+    {
+        $type = class_basename(get_called_class());
+        $default = config('filament-cms.builders.default', RichTextEditor::class);
+        $use = config('filament-cms.builders.' . $type, $default);
+        return $use::make($field);
     }
 
     public static function formFieldName(string $field = 'name'): TextInput
@@ -251,6 +253,7 @@ trait IsCmsResource
                                 SEO::make(),
                             ])
                             ->collapsible()
+                            ->collapsed()
                         : null
             ],
         );

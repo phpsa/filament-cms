@@ -19,5 +19,9 @@ return [
         \Phpsa\FilamentCms\Resources\PagesResource::class,
         \Phpsa\FilamentCms\Resources\CategoriesResource::class,
         \Phpsa\FilamentCms\Resources\BlogPostResource::class,
-    ]
+    ],
+    'builders' => [
+        'default' => \Phpsa\FilamentCms\Builders\Simple::class,
+        'BlogPostResource' =>  \Phpsa\FilamentCms\Builders\BlogPost::class,
+    ],
 ];

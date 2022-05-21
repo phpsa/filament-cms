@@ -30,21 +30,30 @@ trait HasLocalisedDates
 
     protected function convertSystemDatesToLocalDates(array $data): array
     {
-
         $userTZ = static::getResource()::getUserTimezone();
-        $systemTZ = config('app.timezome');
-        if ($userTZ === $systemTZ || blank(static::$dateColumns)) {
+        $systemTZ = config('app.timezone');
+
+        if ($userTZ !== $systemTZ || blank(static::$dateColumns)) {
             return $data;
         }
 
         $flat = Arr::dot($data);
         foreach (static::$dateColumns as $dateColum) {
-            $dt = Carbon::createFromFormat(
-                app(CmsContentPages::class)->getDateFormat(),
-                $flat[$dateColum],
-                $systemTZ
-            );
-            $flat[$dateColum] = $dt ? $dt->setTimezone($userTZ) : null;
+            try {
+                $dt = Carbon::parse($flat[$dateColum], $tz);
+            } catch (\Throwable) {
+                try {
+                    $dt = Carbon::createFromFormat(
+                        app(CmsContentPages::class)->getDateFormat(),
+                        $flat[$dateColum],
+                        $systemTZ
+                    );
+                } catch (\Throwable $e) {
+                    $dt = false;
+                }
+            }
+
+            $flat[$dateColum] = $dt ? $dt->setTimezone($userTZ) : $flat[$dateColum];
         }
 
         return Arr::undot($flat);

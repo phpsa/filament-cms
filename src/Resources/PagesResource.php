@@ -12,7 +12,7 @@ class PagesResource extends Resource
     public static function customFields(): array
     {
         return [
-            static::formFieldEditor('nodes.content')
+            static::formPageBuilder('nodes.content')
                 ->label(strval(__('filament-cms::filament-cms.page.field.content'))),
         ];
     }
