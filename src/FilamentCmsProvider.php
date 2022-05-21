@@ -43,8 +43,7 @@ class FilamentCmsProvider extends PluginServiceProvider
             ->hasCommand(InstallCommand::class)
             ->hasCommand(MakeResourceCommand::class)
             ->hasMigrations([
-                'create_cms_content_nodes_table',
-                'create_cms_content_pages',
+                'create_cms_content_pages_table',
             ]); //->hasViews()->hasConfigFile();
     }
 
