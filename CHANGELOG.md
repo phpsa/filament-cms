@@ -1,3 +1,11 @@
+## [2.0.2](https://github.com/phpsa/filament-cms/compare/v2.0.1...v2.0.2) (2022-05-27)
+
+
+### Bug Fixes
+
+* migration_path ([d0db5d2](https://github.com/phpsa/filament-cms/commit/d0db5d296b0b1ef1cef82218792eb170df6aa466))
+* revert to using Filmanent Core timezone management ([bd1d43f](https://github.com/phpsa/filament-cms/commit/bd1d43f2286b2e273222531c03c1d217d351f633))
+
 ## [2.0.1](https://github.com/phpsa/filament-cms/compare/v2.0.0...v2.0.1) (2022-05-21)
 
 
