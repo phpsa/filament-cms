@@ -56,11 +56,11 @@ class Resource extends FilamentResource
                 [
                     TextColumn::make('created_at')
                     ->label(strval(__('filament-cms::filament-cms.table.column.created')))
-                    ->dateTime(timezone: static::getUserTimezone())
+                    ->dateTime()
                     ->sortable(),
                     TextColumn::make('updated_at')
                     ->label(strval(__('filament-cms::filament-cms.table.column.updated')))
-                    ->dateTime(timezone: static::getUserTimezone())->sortable(),
+                    ->dateTime()->sortable(),
                 ],
             )
         )->filters(

@@ -2,28 +2,20 @@
 
 namespace Phpsa\FilamentCms\Resources;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
 use Phpsa\FilamentCms\Resources\Resource;
-use Filament\Forms\Components\MultiSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Phpsa\FilamentCms\Models\CmsContentPages;
-use Filament\Forms\Components\BelongsToSelect;
 use Filament\Forms\Components\SpatieTagsInput;
 use Phpsa\FilamentCms\Components\FeaturedImage;
-use Filament\Forms\Components\BelongsToManyMultiSelect;
 use Filament\Forms\Components\Hidden;
 use Phpsa\FilamentCms\Resources\BlogPostResource\Pages;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Phpsa\FilamentCms\Resources\BlogPostResource\RelationManagers;
 
 class BlogPostResource extends Resource
 {
@@ -61,7 +53,7 @@ class BlogPostResource extends Resource
         return [
             DateTimePicker::make('published_at')
                             ->label(strval(__('filament-cms::filament-cms.form.field.publish.date')))
-                            ->default(now(static::getUserTimezone())),
+                            ->default(now()),
 
             Select::make('nodes.category_id')
                 ->fromCmsResource(CategoriesResource::class)
@@ -130,7 +122,7 @@ class BlogPostResource extends Resource
             [
                 TextColumn::make('published_at')
                 ->label(strval(__('filament-cms::filament-cms.table.column.published')))
-                ->dateTime(timezone: static::getUserTimezone())
+                ->dateTime()
                 ->sortable(),
             ]
         );

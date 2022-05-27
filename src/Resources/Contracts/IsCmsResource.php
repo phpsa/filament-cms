@@ -3,8 +3,6 @@
 namespace Phpsa\FilamentCms\Resources\Contracts;
 
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Builder\Block;
-use Illuminate\Support\Str;
 use RalphJSmit\Filament\SEO\SEO;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Field;
@@ -257,10 +255,5 @@ trait IsCmsResource
                         : null
             ],
         );
-    }
-
-    public static function getUserTimezone(): string
-    {
-        return config('request.user.timezone', config('app.timezone', 'UTC'));
     }
 }

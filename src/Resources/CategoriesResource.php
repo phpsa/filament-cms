@@ -5,7 +5,6 @@ namespace Phpsa\FilamentCms\Resources;
 use Phpsa\FilamentCms\Resources\Resource;
 use Phpsa\FilamentCms\Components\FeaturedImage;
 use Phpsa\FilamentCms\Resources\CategoriesResource\Pages;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class CategoriesResource extends Resource
 {
