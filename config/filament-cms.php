@@ -1,7 +1,6 @@
 <?php
 
-use Filament\Forms\Components\FileUpload;
-use Phpsa\FilamentCms\Components\MediaPicker;
+use Phpsa\FilamentCms\Components\Fields\MediaPicker;
 
 return [
     'editor' =>  [
@@ -62,7 +61,8 @@ return [
         'min_size' => 0,
         'max_size' => 3000,
         'directory' => 'media',
-        'rules' => []
+        'rules' => [],
+        'focal' => '50% 50%',
 
     ]
 ];

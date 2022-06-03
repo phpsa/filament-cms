@@ -18,9 +18,9 @@ use Phpsa\FilamentCms\Models\CmsContentPages;
 use Phpsa\FilamentCms\Commands\InstallCommand;
 use Phpsa\FilamentCms\Resources\PagesResource;
 use Phpsa\FilamentCms\Resources\PostsResource;
-use Phpsa\FilamentCms\Components\CreateMediaForm;
+use Phpsa\FilamentCms\Components\Forms\CreateMediaForm;
 use Phpsa\FilamentCms\Resources\BlogPostResource;
-use Phpsa\FilamentCms\Components\MediaPickerModal;
+use Phpsa\FilamentCms\Components\Forms\MediaPickerModal;
 use Phpsa\FilamentCms\Commands\MakeResourceCommand;
 use Phpsa\FilamentCms\Resources\CategoriesResource;
 

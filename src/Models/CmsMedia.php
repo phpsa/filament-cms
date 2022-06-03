@@ -30,6 +30,7 @@ class CmsMedia extends Model
         'disk',
         'directory',
         'size',
+        'focal_point'
     ];
 
     protected $casts = [
@@ -122,5 +123,10 @@ class CmsMedia extends Model
     {
         $i = floor(log($this->size ?: 1, 1024));
         return round($this->size / pow(1024, $i), [0,0,2,2,3][$i], $precision) . ['B','kB','MB','GB','TB'][$i];
+    }
+
+    public function isLocalDisk(): Attribute
+    {
+        return Attribute::get(fn(): bool => config("filesystems.disks.{$this->disk}.driver") === 'local');
     }
 }

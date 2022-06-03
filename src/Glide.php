@@ -2,11 +2,13 @@
 
 namespace Phpsa\FilamentCms;
 
+use League\Glide\Server;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use League\Glide\ServerFactory;
 use Phpsa\FilamentCms\Models\CmsMedia;
 use Illuminate\Support\Facades\Storage;
 use League\Glide\Responses\PsrResponseFactory;
-use League\Glide\Server;
 
 class Glide
 {
@@ -21,7 +23,7 @@ class Glide
             'cache'    => $cache,
             'driver'   => config('filament-cms.media.driver', 'gd'),
             'response' => new GlideResponseFactory(),
-            'presets'  => config('filament-cms.media.presets', []),
+            'presets'  => static::fetchPresets($media),
             'defaults' => config('filament-cms.media.defaults', []),
         ]);
 
@@ -40,5 +42,25 @@ class Glide
     public static function output(CmsMedia $media, array $params = []): void
     {
         static::getServerForMedia($media)->outputImage($media->filename, $params);
+    }
+
+    public static function fetchPresets(CmsMedia $media): array
+    {
+        return collect(
+            config('filament-cms.media.presets', [])
+        )
+        ->map(
+            function ($preset) use ($media) {
+                if (Arr::has($preset, 'fit') && Arr::get($preset, 'fit') === 'crop') {
+                    $preset['fit'] = Str::of($media->focal_point ?? config('filament-cms.media.focal'))
+                        ->replace("%", "")
+                        ->prepend('crop-')
+                        ->slug()
+                        ->toString();
+                }
+                return $preset;
+            }
+        )
+        ->toArray();
     }
 }

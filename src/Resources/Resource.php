@@ -116,41 +116,53 @@ class Resource extends FilamentResource
 
     public static function generateTabbedLayout(Form $form): Form
     {
+
         return $form
             ->columns(4)
-            ->schema([
-                Grid::make()->schema(
-                    [
-                        Tabs::make('Tab Form')
-                        ->tabs(
-                            static::mergeSections(
-                                [
-                                    Tabs\Tab::make(strval(__('filament-cms::filament-cms.form.section.general')))
-                                    ->schema(
-                                        static::generateFormGeneralSection()
+            ->schema(
+                collect([
+                    Grid::make()->schema(
+                        [
+                            Tabs::make('Tab Form')
+                                ->tabs(
+                                    static::mergeSections(
+                                        [
+                                            Tabs\Tab::make(strval(__('filament-cms::filament-cms.form.section.general')))
+                                            ->schema(
+                                                static::generateFormGeneralSection()
+                                            )
+                                        ],
+                                        static::customTabs(),
+                                        [
+                                            static::$hasSeo ? Tabs\Tab::make('SEO')
+                                            ->schema([
+                                                Card::make()->schema([SEO::make()])
+                                            ]) : null
+                                        ]
                                     )
-                                ],
-                                static::customTabs(),
-                                [
-                                    static::$hasSeo ? Tabs\Tab::make('SEO')
-                                ->schema([
-                                    Card::make()->schema([SEO::make()])
+                                )
+                                 ->columnSpan(static::$disableSidebar ? 4 : 3),
+                        ]
+                    )->columnSpan(static::$disableSidebar ? 4 : 3),
+                    static::$disableSidebar ? null : Grid::make()->schema(
+                        static::generateFormSidebar()
+                    )->columnSpan(1),
 
-                                    ]) : null
-                                ]
-                            )
-                        )->columnSpan(3),
-                    ]
-                )->columnSpan(3),
-                Grid::make()->schema(
-                    static::generateFormSidebar()
-                )->columnSpan(1),
-            ]);
+                ])->filter()->toArray()
+            );
     }
 
     public static function generateSingleLayout(Form $form): Form
     {
-        return $form->columns(4)
+        return static::$disableSidebar
+        ? $form
+            ->schema([
+                Grid::make()->schema(
+                    static::generateFormGeneralSection()
+                ),
+            ])
+        :
+        $form->columns(4)
             ->schema([
                 Grid::make()->schema(
                     static::generateFormGeneralSection()

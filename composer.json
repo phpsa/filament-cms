@@ -34,7 +34,8 @@
     "ralphjsmit/laravel-filament-seo": "^0.7",
     "spatie/enum": "^3.13",
     "spatie/laravel-package-tools": "^1.10",
-    "dereuromark/media-embed": "^0.5"
+    "dereuromark/media-embed": "^0.5",
+    "johncarter/filament-focal-point-picker": "^0.6"
   },
   "config": {
     "sort-packages": true

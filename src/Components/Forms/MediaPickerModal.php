@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpsa\FilamentCms\Components;
+namespace Phpsa\FilamentCms\Components\Forms;
 
 use Livewire\Component;
 use Filament\Facades\Filament;

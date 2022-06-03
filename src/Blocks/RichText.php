@@ -4,7 +4,7 @@ namespace Phpsa\FilamentCms\Blocks;
 
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Builder\Block;
-use Phpsa\FilamentCms\Components\RichTextEditor;
+use Phpsa\FilamentCms\Components\Fields\RichTextEditor;
 
 class RichText
 {

@@ -11,7 +11,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\MultiSelectFilter;
-use Phpsa\FilamentCms\Components\RichTextEditor;
+use Phpsa\FilamentCms\Components\Fields\RichTextEditor;
 use Phpsa\FilamentCms\Resources\Resource\Pages\EditRecord;
 
 trait IsCmsResource

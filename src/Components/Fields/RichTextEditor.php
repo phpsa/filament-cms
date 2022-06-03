@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpsa\FilamentCms\Components;
+namespace Phpsa\FilamentCms\Components\Fields;
 
 use Filament\Forms\Components\Field;
 

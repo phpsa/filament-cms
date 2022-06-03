@@ -12,11 +12,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Phpsa\FilamentCms\Resources\Resource;
 use Filament\Forms\Components\DateTimePicker;
-use Phpsa\FilamentCms\Components\MediaPicker;
+use Filament\Forms\Components\MarkdownEditor;
+use Phpsa\FilamentCms\Components\Fields\MediaPicker;
 use Phpsa\FilamentCms\Models\CmsContentPages;
 use Filament\Forms\Components\SpatieTagsInput;
 use Phpsa\FilamentCms\Components\FeaturedImage;
-use Phpsa\FilamentCms\Components\VideoEmbed;
+use Phpsa\FilamentCms\Components\Fields\VideoEmbed;
 use Phpsa\FilamentCms\Resources\BlogPostResource\Pages;
 
 class BlogPostResource extends Resource
@@ -44,7 +45,7 @@ class BlogPostResource extends Resource
                             ->minLength(50)
                             ->maxLength(1000)
                             ->columnSpan(2),
-            static::formPageBuilder('nodes.content')
+            MarkdownEditor::make('nodes.content')->columnSpan(2)
                 ->label(strval(__('filament-cms::filament-cms.page.field.content'))),
 
             VideoEmbed::make('nodes.video'),

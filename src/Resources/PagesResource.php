@@ -9,7 +9,8 @@ class PagesResource extends Resource
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    public static function customFields(): array
+
+    public static function customCards(): array
     {
         return [
             static::formPageBuilder('nodes.content')

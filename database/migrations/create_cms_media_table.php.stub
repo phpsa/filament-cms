@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('cms_media', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->nullable();
+            $table->uuid('uuid');
             $table->string('filename');
+            $table->string('focal_point')->nullable();
             $table->string('ext')->nullable();
             $table->string('type')->nullable();
             $table->string('alt')->nullable();

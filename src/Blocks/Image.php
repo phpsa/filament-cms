@@ -3,8 +3,6 @@
 namespace Phpsa\FilamentCms\Blocks;
 
 use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Phpsa\FilamentCms\Components\MediaPicker;
 
 class Image
 {

@@ -150,4 +150,14 @@ class CmsContentPages extends Model
             fn($query) => $query->whereNamespace($type)
         )->with(['nodes','tagsTranslated','children','parents']);
     }
+
+    public function scopeWhereNode(Builder $builder, $column, $operator = null, $value = null, $boolean = 'and'): Builder
+    {
+        return $builder->where("nodes->{$column}", $operator, $value, $boolean);
+    }
+
+    public function scopeOrWhereNode(Builder $builder, $column, $operator = null, $value = null): Builder
+    {
+        return $builder->whereNode($column, $operator, $value, 'or');
+    }
 }

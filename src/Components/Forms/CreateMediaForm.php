@@ -1,11 +1,11 @@
 <?php
 
-namespace Phpsa\FilamentCms\Components;
+namespace Phpsa\FilamentCms\Components\Forms;
 
 use Filament\Forms;
 use Livewire\Component;
 use Filament\Forms\Contracts\HasForms;
-use Phpsa\FilamentCms\Components\MediaUpload;
+use Phpsa\FilamentCms\Components\Fields\MediaUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Phpsa\FilamentCms\Models\CmsMedia;
 

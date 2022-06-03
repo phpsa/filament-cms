@@ -15,11 +15,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\Placeholder;
-use Phpsa\FilamentCms\Components\MediaUpload;
+use Phpsa\FilamentCms\Components\Fields\MediaUpload;
 use Phpsa\FilamentCms\Components\DateTimePlaceholder;
 use Phpsa\FilamentCms\Resources\MediaResource\EditMedia;
 use Phpsa\FilamentCms\Resources\MediaResource\ListMedia;
 use Phpsa\FilamentCms\Resources\MediaResource\CreateMedia;
+use Johncarter\FilamentFocalPointPicker\Fields\FocalPointPicker;
 
 class MediaResource extends Resource
 {
@@ -103,6 +104,9 @@ class MediaResource extends Resource
                                     ->rows(2),
                                 Textarea::make('description')
                                     ->rows(2),
+                                FocalPointPicker::make('focal_point')
+                                ->default(config('filament-cms.media.focal'))
+                                        ->imageField('filename')
                             ])
                     ])->columnSpan([
                         'lg' => 'full',
@@ -117,25 +121,34 @@ class MediaResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('thumbnail_url'),
+                ImageColumn::make('thumbnail_url')->height(50)->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('filename')
                     ->searchable()
+                     ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
+                TextColumn::make('size')
+                    ->formatStateUsing(fn($record) => $record->humanSize())
+                    ->searchable()
+                     ->toggleable(isToggledHiddenByDefault: false)
                     ->sortable(),
                 IconColumn::make('disk')
+                  ->toggleable(isToggledHiddenByDefault: false)
                     ->options([
-                        'heroicon-o-server',
-                        'heroicon-o-cloud' => function ($state): bool {
-                            return in_array($state, ['cloudinary', 's3']);
-                        },
+                        'heroicon-o-cloud',
+                        'heroicon-o-server' => fn ($state): bool => config("filesystems.disks.{$state}.driver") === 'local',
                     ])
                     ->colors([
-                        'secondary', 'success' => function ($state): bool {
-                            return in_array($state, ['cloudinary', 's3']);
-                        },
-                    ]),
+                        'secondary',
+                        'primary' => fn ($state): bool =>  config("filesystems.disks.{$state}.driver") === 'local',
+                    ])->tooltip(fn($record) => $record->disk),
+                TextColumn::make('created_at')
+                    ->label('Created')
+                    ->dateTime()
+                    ->sortable(),
                 TextColumn::make('updated_at')
-                    ->label('Date')
-                    ->date()
+                    ->label('Updated')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
             ])
             ->filters([

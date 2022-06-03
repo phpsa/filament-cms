@@ -6,8 +6,8 @@ use Closure;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
-use Phpsa\FilamentCms\Components\VideoEmbed;
-use Phpsa\FilamentCms\Components\MediaPicker;
+use Phpsa\FilamentCms\Components\Fields\VideoEmbed;
+use Phpsa\FilamentCms\Components\Fields\MediaPicker;
 
 class Hero
 {
