@@ -2,6 +2,7 @@
 
 namespace Phpsa\FilamentCms;
 
+use Livewire\Livewire;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Filament\PluginServiceProvider;
@@ -17,7 +18,9 @@ use Phpsa\FilamentCms\Models\CmsContentPages;
 use Phpsa\FilamentCms\Commands\InstallCommand;
 use Phpsa\FilamentCms\Resources\PagesResource;
 use Phpsa\FilamentCms\Resources\PostsResource;
+use Phpsa\FilamentCms\Components\CreateMediaForm;
 use Phpsa\FilamentCms\Resources\BlogPostResource;
+use Phpsa\FilamentCms\Components\MediaPickerModal;
 use Phpsa\FilamentCms\Commands\MakeResourceCommand;
 use Phpsa\FilamentCms\Resources\CategoriesResource;
 
@@ -40,10 +43,12 @@ class FilamentCmsProvider extends PluginServiceProvider
             ->hasViews()
             ->hasConfigFile()
             ->hasTranslations()
+            ->hasRoutes('web')
             ->hasCommand(InstallCommand::class)
             ->hasCommand(MakeResourceCommand::class)
             ->hasMigrations([
                 'create_cms_content_pages_table',
+                'create_cms_media_table'
             ]); //->hasViews()->hasConfigFile();
     }
 
@@ -58,6 +63,9 @@ class FilamentCmsProvider extends PluginServiceProvider
                 CmsContentPages::whereIn('namespace', (array) $relations)->pluck('name', 'id')
             )
         );
+
+        Livewire::component('media-picker-modal', MediaPickerModal::class);
+        Livewire::component('create-media-form', CreateMediaForm::class);
 
         self::addResourceToNavigation('Cms Page', PagesResource::class);
         self::addResourceToNavigation('Cms Category', CategoriesResource::class);

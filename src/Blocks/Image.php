@@ -4,14 +4,15 @@ namespace Phpsa\FilamentCms\Blocks;
 
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Phpsa\FilamentCms\Components\MediaPicker;
 
 class Image
 {
-    public static function make(): Block
+    public static function make($field): Block
     {
-        return Block::make('Image')
+        return Block::make($field)
             ->schema([
-                SpatieMediaLibraryFileUpload::make('image')
+                config('filament-cms.uploader.class')::make('content')
                     ->label('Image'),
             ]);
     }

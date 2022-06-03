@@ -3,19 +3,21 @@
 namespace Phpsa\FilamentCms\Resources;
 
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Phpsa\FilamentCms\Resources\Resource;
 use Filament\Forms\Components\DateTimePicker;
+use Phpsa\FilamentCms\Components\MediaPicker;
 use Phpsa\FilamentCms\Models\CmsContentPages;
 use Filament\Forms\Components\SpatieTagsInput;
 use Phpsa\FilamentCms\Components\FeaturedImage;
-use Filament\Forms\Components\Hidden;
+use Phpsa\FilamentCms\Components\VideoEmbed;
 use Phpsa\FilamentCms\Resources\BlogPostResource\Pages;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class BlogPostResource extends Resource
 {
@@ -44,6 +46,8 @@ class BlogPostResource extends Resource
                             ->columnSpan(2),
             static::formPageBuilder('nodes.content')
                 ->label(strval(__('filament-cms::filament-cms.page.field.content'))),
+
+            VideoEmbed::make('nodes.video'),
 
         ];
     }
@@ -95,13 +99,11 @@ class BlogPostResource extends Resource
         return [
             Tab::make(strval(__('filament-cms::filament-cms.form.section.blog.gallery')))
             ->schema([
-                SpatieMediaLibraryFileUpload::make('gallery_images')
-                    ->disableLabel(true)
-                    ->directory('blog')
+                FileUpload::make('node.gallery')
+                    ->label('Gallery')
                     ->multiple()
-                    ->collection('gallery')
-                    ->enableReordering()
-                    ->panelLayout('grid')
+                        ->enableReordering()
+                        ->panelLayout('grid')
             ])
         ];
     }

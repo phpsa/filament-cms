@@ -12,7 +12,7 @@ class RichText
     {
         return Block::make($field)
             ->schema([
-                RichTextEditor::make('rich-text'),
+                RichTextEditor::make('content'),
             ])->columnSpan(2);
     }
 }

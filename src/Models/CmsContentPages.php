@@ -3,24 +3,14 @@
 namespace Phpsa\FilamentCms\Models;
 
 use Spatie\Tags\HasTags;
-use Spatie\Image\Manipulations;
-use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Phpsa\FilamentCms\Enum\StatusEnum;
 
 /**
  * Phpsa\FilamentCms\Models\CmsContentPages
@@ -69,13 +59,12 @@ use Phpsa\FilamentCms\Enum\StatusEnum;
  * @method static \Illuminate\Database\Query\Builder|CmsContentPages withoutTrashed()
  * @mixin \Eloquent
  */
-class CmsContentPages extends Model implements HasMedia
+class CmsContentPages extends Model
 {
     use HasFactory;
     use SoftDeletes;
     use HasSEO;
     use HasTags;
-    use InteractsWithMedia;
 
     protected $fillable = [
         'parent_id',
@@ -96,20 +85,6 @@ class CmsContentPages extends Model implements HasMedia
         'expired_at'   => 'datetime'
     ];
 
-    public function registerMediaConversions(Media $media = null): void
-    {
-
-        /** @var array<string, \Closure> $conversions */
-        $conversions = config('filament_cms.media_conversions', []);
-        if (blank($conversions)) {
-            return;
-        }
-
-        collect($conversions)
-            ->each(
-                fn($callback, $key) => $callback($this->addMediaConversion($key))
-            );
-    }
 
 
     public function parents(): HasMany
@@ -159,7 +134,6 @@ class CmsContentPages extends Model implements HasMedia
     }
 
     /**
-     * Undocumented function
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param string $key

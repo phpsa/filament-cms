@@ -19,7 +19,7 @@ class CategoriesResource extends Resource
     public static function customSidebarCards(): array
     {
         return [
-            FeaturedImage::make('category_image'),
+            FeaturedImage::make('nodes.category_image'),
         ];
     }
 
