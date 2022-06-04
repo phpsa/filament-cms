@@ -60,7 +60,7 @@ class FilamentCmsProvider extends PluginServiceProvider
             'fromCmsResource',
             /** @phpstan-ignore-next-line */
             fn (string|array $relations)  => $this->options(
-                CmsContentPages::whereIn('namespace', (array) $relations)->pluck('name', 'id')
+                CmsContentPages::whereIn('namespace', (array) $relations)->pluck('name', 'id')->toArray()
             )
         );
 

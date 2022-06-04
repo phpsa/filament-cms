@@ -3,7 +3,7 @@
 namespace Phpsa\FilamentCms\Resources;
 
 use Phpsa\FilamentCms\Resources\Resource;
-use Phpsa\FilamentCms\Components\FeaturedImage;
+use Phpsa\FilamentCms\Components\Sections\FeaturedImageSection;
 use Phpsa\FilamentCms\Resources\CategoriesResource\Pages;
 
 class CategoriesResource extends Resource
@@ -16,10 +16,10 @@ class CategoriesResource extends Resource
         ];
     }
 
-    public static function customSidebarCards(): array
+    public static function sidebarCards(): array
     {
         return [
-            FeaturedImage::make('nodes.category_image'),
+            FeaturedImageSection::make('nodes.category_image'),
         ];
     }
 

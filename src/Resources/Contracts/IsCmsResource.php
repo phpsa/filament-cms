@@ -2,16 +2,18 @@
 
 namespace Phpsa\FilamentCms\Resources\Contracts;
 
-use Filament\Forms\Components\Builder;
 use RalphJSmit\Filament\SEO\SEO;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Section;
+use Phpsa\FilamentCms\Builders\Simple;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\MultiSelectFilter;
+use Phpsa\FilamentCms\Components\Fields\CmsStatus;
 use Phpsa\FilamentCms\Components\Fields\RichTextEditor;
+use Phpsa\FilamentCms\Components\Filters\PublishedFilter;
 use Phpsa\FilamentCms\Resources\Resource\Pages\EditRecord;
 
 trait IsCmsResource
@@ -46,7 +48,7 @@ trait IsCmsResource
         return [];
     }
 
-    public static function customSidebarCards(): array
+    public static function sidebarCards(): array
     {
         return [];
     }
@@ -75,8 +77,7 @@ trait IsCmsResource
     public static function formPageBuilder(string $field): Builder
     {
         $type = class_basename(get_called_class());
-        $default = config('filament-cms.builders.default', RichTextEditor::class);
-        $use = config('filament-cms.builders.' . $type, $default);
+        $use = config('filament-cms.builders.' . $type, config('filament-cms.builders.default', Simple::class));
         return $use::make($field);
     }
 
@@ -148,46 +149,12 @@ trait IsCmsResource
 
     public static function publishingFields(): array
     {
-        if (static::$isPublishable === false) {
-            return [];
-        }
-
-        $status = config('filament-cms.statusEnum');
-
-        $isPasswordProtected = $status::passwordProtected();
-
-        return [
-            Select::make('status')
-                ->label(strval(__('filament-cms::filament-cms.form.field.status')))
-                ->default($status::default())
-                ->required()
-                ->reactive()
-                ->options($status::toArray()),
-            $isPasswordProtected
-                ? TextInput::make('security')
-                    ->label(strval(__('filament-cms::filament-cms.form.field.password')))
-                    ->reactive()
-                    ->required()
-                    ->visible(
-                        fn (\Closure $get): bool => $get('status') === $isPasswordProtected
-                    )
-                : null,
-        ];
+        return  static::$isPublishable ? CmsStatus::make() : [];
     }
 
     public static function filterPublishable(): array
     {
-        if (static::$isPublishable === false) {
-            return [];
-        }
-
-        $status = config('filament-cms.statusEnum');
-
-        return [
-            MultiSelectFilter::make('status')
-                ->label(strval(__('filament-cms::filament-cms.table.filter.status')))
-                ->options($status::toArray()),
-        ];
+        return static::$isPublishable ? [PublishedFilter::make()] : [];
     }
 
     public static function tablePublishedColumn(): array
@@ -202,7 +169,12 @@ trait IsCmsResource
             BadgeColumn::make('status')
                 ->label(strval(__('filament-cms::filament-cms.table.column.status')))
                 ->enum($status::toArray())
-                ->colors(array_flip($status::colors()))
+                ->colors(
+                    collect($status::colors())
+                        ->mapToGroups(fn($val, $key) => [$val => $key])
+                        ->map(fn($val) => fn($state) => $val->contains($state))
+                        ->toArray()
+                )
                 ->sortable()
         ];
     }
@@ -215,7 +187,7 @@ trait IsCmsResource
                     static::mergeSections(
                         [
                             static::formFieldName('name')
-                                                    ->label(strval(__('filament-cms::filament-cms.form.field.name'))),
+                                ->label(strval(__('filament-cms::filament-cms.form.field.name'))),
                             static::formFieldSlug()
                         ],
                         static::customFields()
@@ -244,7 +216,7 @@ trait IsCmsResource
                             ->collapsible() : null,
 
             ],
-            static::customSidebarCards(),
+            static::sidebarCards(),
             [static::$hasSeo && ! static::$tabbedLayout
                         ? Section::make(strval(__('filament-cms::filament-cms.form.section.seo')))
                             ->schema([

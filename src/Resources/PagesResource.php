@@ -9,7 +9,6 @@ class PagesResource extends Resource
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-
     public static function customCards(): array
     {
         return [

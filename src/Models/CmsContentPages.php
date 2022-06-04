@@ -82,9 +82,13 @@ class CmsContentPages extends Model
     protected $casts = [
         'nodes'        => 'json',
         'published_at' => 'datetime',
-        'expired_at'   => 'datetime'
+        'expired_at'   => 'datetime',
+        'security'     => 'encrypted:json',
     ];
 
+    protected $hidden = [
+        'security'
+    ];
 
 
     public function parents(): HasMany
@@ -148,7 +152,7 @@ class CmsContentPages extends Model
         return $builder->whereJsonContains("nodes->{$key}", $value)->when(
             $type,
             fn($query) => $query->whereNamespace($type)
-        )->with(['nodes','tagsTranslated','children','parents']);
+        )->with(['tagsTranslated','children','parents']);
     }
 
     public function scopeWhereNode(Builder $builder, $column, $operator = null, $value = null, $boolean = 'and'): Builder

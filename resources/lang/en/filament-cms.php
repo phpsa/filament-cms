@@ -18,9 +18,10 @@ return [
     'table.column.status'        => 'Status',
 
 
+    'table.filter.trashed'       => 'Deleted Status',
     'table.filter.active'        => 'Active',
     'table.filter.deleted'       => 'Deleted',
-    'table.filter.created_from'  => 'Created From',
+    'table.filter.created_from'  => 'Created After',
     'table.filter.created_until' => 'Created Before',
     'table.filter.status'        => 'By Status',
 
@@ -29,10 +30,10 @@ return [
     'form.field.parent'          => 'Parent Page',
     'form.field.status'          => 'Status',
     'form.field.password'        => 'Password',
+    'form.field.roles'           => 'User Roles',
     'form.field.publish.date'    => 'Publish Date',
     'form.field.category'        => 'Category',
     'form.field.tags'            => 'Tags',
-
 
     'form.section.meta'          => 'Content Meta',
     'form.section.seo'           => 'Content SEO',
@@ -43,7 +44,8 @@ return [
 
     'enum.status.publish'        => 'Publish',
     'enum.status.draft'          => 'Draft',
-    'enum.status.private'        => 'Private',
     'enum.status.pending'        => 'Pending',
-    'enum.status.inherit'        => 'Inherit',
+    'enum.status.password'       => 'Password',
+    'enum.status.role'           => 'User Role',
+    'enum.status.authed'         => 'Authenticated Users',
 ];

@@ -12,7 +12,7 @@ class DateTimePlaceholder extends DateTimePicker
 
     public function getContent()
     {
-        return $this->evaluate($this->content);
+        return $this->evaluate($this->content ?? $this->getState());
     }
 
     public function content($content): static

@@ -3,24 +3,23 @@
 namespace Phpsa\FilamentCms\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Phpsa\FilamentCms\Models\CmsContentPages;
-use Illuminate\Routing\Controller;
 use Phpsa\FilamentCms\Resources\PagesResource;
+use Phpsa\FilamentCms\Http\Controllers\Traits\HasCmsData;
 
 class CmsPageController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Illuminate\Contracts\View\View
-     */
-    public function __invoke(Request $request, CmsContentPages $page)
-    {
-        abort_unless($page->namespace === PagesResource::class, 404);
+    use HasCmsData;
 
-        return View::first(['cms.page','filament-cms::cms.page'])
-            ->with('page', $page);
-    }
+    /**
+     * @var string
+     */
+    protected string $view = 'cms.page';
+
+    /**
+     * @var class-string
+     */
+    protected string $resource = PagesResource::class;
 }

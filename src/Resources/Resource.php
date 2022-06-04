@@ -9,18 +9,12 @@ use RalphJSmit\Filament\SEO\SEO;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use Phpsa\FilamentCms\Models\CmsContentPages;
 use Filament\Resources\Resource as FilamentResource;
+use Phpsa\FilamentCms\Components\Filters\CreationFilter;
 use Phpsa\FilamentCms\Resources\Contracts\IsCmsResource;
+use Phpsa\FilamentCms\Components\Filters\SoftDeleteFilter;
 
 class Resource extends FilamentResource
 {
@@ -67,39 +61,9 @@ class Resource extends FilamentResource
             static::mergeSections(
                 static::filterPublishable(),
                 [
-                    SelectFilter::make('with_trashed')->options(
-                        [
-                            'withoutTrashed' => __('filament-cms::filament-cms.table.filter.active'),
-                            'onlyTrashed'    => __('filament-cms::filament-cms.table.filter.deleted'),
-                        ]
-                    )
-                ->query(
-                    fn($builder, $filter) => match ($filter['value']) {
-                        'withoutTrashed' => $builder->withoutTrashed(),
-                    'onlyTrashed'    => $builder->onlyTrashed(),
-                    default    => $builder->withTrashed(),
-                    }
-                )->default('withoutTrashed'),
-                    Filter::make('created_at')->form([
-                        DatePicker::make('created_from')
-                        ->label(strval(__('filament-cms::filament-cms.table.filter.created_from')))
-                        ->minDate('2020-01-01')
-                ->maxDate(now()),
-                        DatePicker::make('created_until')
-                        ->label(strval(__('filament-cms::filament-cms.table.filter.created_until')))
-                        ->minDate('2020-01-01')
-                        ->maxDate(now())
-                    ])->query(function (Builder $query, array $data): Builder {
-                        return $query
-                        ->when(
-                            $data['created_from'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                        )
-                        ->when(
-                            $data['created_until'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                        );
-                    }),
+                    SoftDeleteFilter::make(),
+
+                    CreationFilter::make(),
 
                 ],
                 static::customTableFilters()

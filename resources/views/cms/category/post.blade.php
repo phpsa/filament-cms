@@ -1,14 +1,12 @@
-
 <div class="container">
 
-    <h2>{{$post->name}}</h2>
-    <em>{{$topic->name}}</em>
+    <h2>{{ $page->name }}</h2>
+    <em>{{ $topic->name }}</em>
 
     ##
-    E: {{ $post->excerpt }}
-##
- B: {{$post->node('content')}}
- ##
+    E: {{ $page->excerpt }}
+    ##
+    B: {{ $page->node('content') }}
+    ##
 
 </div>
-

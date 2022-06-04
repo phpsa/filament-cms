@@ -21,6 +21,7 @@ use Phpsa\FilamentCms\Resources\MediaResource\EditMedia;
 use Phpsa\FilamentCms\Resources\MediaResource\ListMedia;
 use Phpsa\FilamentCms\Resources\MediaResource\CreateMedia;
 use Johncarter\FilamentFocalPointPicker\Fields\FocalPointPicker;
+use Phpsa\FilamentCms\Components\Filters\CreationFilter;
 
 class MediaResource extends Resource
 {
@@ -63,9 +64,8 @@ class MediaResource extends Resource
                                     return $livewire instanceof CreateMedia;
                             })
                             ->schema([
-                                DateTimePlaceholder::make('uploaded_on')
-                                    ->label('Uploaded on')
-                                    ->content(fn ($record): string => $record->created_at->format('F j, Y')),
+                                DateTimePlaceholder::make('created_at')
+                                    ->label('Uploaded on'),
                                 Placeholder::make('file_type')
                                     ->label('File Type')
                                     ->content(fn ($record): string => $record->type),
@@ -81,13 +81,10 @@ class MediaResource extends Resource
                                 Placeholder::make('directory')
                                     ->label('Directory')
                                     ->content(fn ($record): string => $record->directory),
-                                // Placeholder::make('public_id')
-                                //     ->label('Public Id')
-                                //     ->content(fn ($record): string => $record->public_id)->columnSpan(['lg' => 4]),
                                 Placeholder::make('file_name')
                                     ->label('File Name')
-                                    ->content(fn ($record): string => $record->filename)->columnSpan(['lg' => 4]),
-                            ])->columns(['lg' => 4]),
+                                    ->content(fn ($record): string => $record->filename)->columnSpan(['lg' => 3]),
+                            ])->columns(['lg' => 3]),
                     ])
                     ->columnSpan([
                         'lg' => 'full',
@@ -152,15 +149,8 @@ class MediaResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                CreationFilter::make()
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

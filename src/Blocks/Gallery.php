@@ -4,7 +4,9 @@ namespace Phpsa\FilamentCms\Blocks;
 
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Phpsa\FilamentCms\Components\Fields\MediaPicker;
 
 class Gallery
 {
@@ -12,12 +14,9 @@ class Gallery
     {
         return Block::make($field)
             ->schema([
-                FileUpload::make('content')
-                    ->label('Gallery')
-                    ->multiple()
-               //         ->collection('gallery')
-                        ->enableReordering()
-                        ->panelLayout('grid'),
+                Repeater::make('type:gallery')->schema([
+                    MediaPicker::make('image')
+                ])
             ]);
     }
 }

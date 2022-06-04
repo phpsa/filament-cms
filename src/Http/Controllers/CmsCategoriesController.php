@@ -6,26 +6,40 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Phpsa\FilamentCms\Models\CmsContentPages;
 use Illuminate\Routing\Controller;
+use Phpsa\FilamentCms\Http\Controllers\Traits\HasCmsData;
 use Phpsa\FilamentCms\Resources\BlogPostResource;
 use Phpsa\FilamentCms\Resources\CategoriesResource;
 
 class CmsCategoriesController extends Controller
 {
+    use HasCmsData;
+
+    /**
+     * @var string
+     */
+    protected string $view = 'cms.category.show';
+
+    /**
+     * @var class-string
+     */
+    protected string $resource = CategoriesResource::class;
+
     /**
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\View\View
      */
-    public function show(Request $request, CmsContentPages $page)
+    protected function viewData(CmsContentPages $page): array
     {
-        abort_unless($page->namespace === CategoriesResource::class, 404);
-
-        $posts = CmsContentPages::withRelated('category_id', $page->id, BlogPostResource::class)->simplePaginate(8);
-
-        return View::first(['cms.category.show','filament-cms::cms.category.show'])
-            ->with('category', $page)
-            ->with('posts', $posts);
+        return [
+            'category' => $page,
+            'posts'    => CmsContentPages::withRelated(
+                'category_id',
+                $page->id,
+                BlogPostResource::class
+            )->simplePaginate(8)
+        ];
     }
 
      /**
@@ -38,7 +52,10 @@ class CmsCategoriesController extends Controller
     {
         $categories = CmsContentPages::whereNamespace(CategoriesResource::class)->simplePaginate(8);
 
-        return View::first(['cms.category.index','filament-cms::cms.category.index'])
-            ->with('categories', $categories);
+        return request()->wantsJson() ? response()->json($categories)
+        : View::first(
+            ['cms.category.index','filament-cms::cms.category.index'],
+            ['categories' => $categories]
+        );
     }
 }

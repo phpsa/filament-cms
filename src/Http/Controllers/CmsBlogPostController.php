@@ -3,28 +3,38 @@
 namespace Phpsa\FilamentCms\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Phpsa\FilamentCms\Models\CmsContentPages;
-use Illuminate\Routing\Controller;
 use Phpsa\FilamentCms\Resources\BlogPostResource;
+use Phpsa\FilamentCms\Http\Controllers\Traits\HasCmsData;
 
 class CmsBlogPostController extends Controller
 {
+    use HasCmsData;
+
     /**
+     * @var string
+     */
+    protected string $view = 'cms.category.post';
+
+    /**
+     * @var class-string
+     */
+    protected string $resource = BlogPostResource::class;
+
+      /**
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\View\View
      */
-    public function show(Request $request, CmsContentPages $page)
+    protected function viewData(CmsContentPages $page): array
     {
-        abort_unless($page->namespace === BlogPostResource::class, 404);
-
-        $topic = $page->relatedNode('category_id');
-
-        return View::first(['cms.category.post','filament-cms::cms.category.post'])
-            ->with('post', $page)
-            ->with('topic', $topic);
+        return [
+            'page'  => $page,
+            'topic' =>  $page->relatedNode('category_id')
+        ];
     }
 
     /**
@@ -36,7 +46,7 @@ class CmsBlogPostController extends Controller
      *
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\View\View
      */
-    public function showWithTopic(Request $request, string $topic, CmsContentPages $page)
+    public function showWithTopic(Request $request, string $topic, string $page)
     {
         return $this->show($request, $page);
     }
