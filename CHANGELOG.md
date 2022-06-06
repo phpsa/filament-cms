@@ -1,3 +1,11 @@
+# [2.1.0](https://github.com/phpsa/filament-cms/compare/v2.0.2...v2.1.0) (2022-06-06)
+
+
+### Features
+
+* page builder updates ([4e373eb](https://github.com/phpsa/filament-cms/commit/4e373eb8cfa2dae81487158858671ff012a4f9ff))
+* Rebuild even better ([c67da23](https://github.com/phpsa/filament-cms/commit/c67da23518b59a32d34085e6fbf9e180146b5a80))
+
 ## [2.0.2](https://github.com/phpsa/filament-cms/compare/v2.0.1...v2.0.2) (2022-05-27)
 
 
