@@ -18,7 +18,7 @@ class MediaPicker extends Field
             if (blank($state)) {
                 return null;
             }
-            return blank($state) ? null : $state['id'];
+            return is_array($state) ?  $state['id'] : $state;
         });
     }
 

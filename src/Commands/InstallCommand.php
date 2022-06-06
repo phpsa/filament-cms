@@ -40,13 +40,11 @@ class InstallCommand extends Command
         $this->comment('Publishing CMS Configuration...');
         $this->callSilent('vendor:publish', ['--tag' => 'filament-cms-config']);
         $this->callSilent('vendor:publish', ['--tag' => 'seo-config']);
-        $this->callSilent('vendor:publish', ['--tag' => 'config', '--provider' => "Spatie\MediaLibrary\MediaLibraryServiceProvider"]);
 
         $this->comment('Publishing Filament CMS Migrations...');
         $this->callSilent('vendor:publish', ['--tag' => 'filament-cms-migrations']);
         $this->callSilent('vendor:publish', ['--tag' => 'tags-migrations']);
         $this->callSilent('vendor:publish', ['--tag' => 'seo-migrations']);
-        $this->callSilent('vendor:publish', ['--tag' => 'migrations', '--provider' => "Spatie\MediaLibrary\MediaLibraryServiceProvider"]);
 
         $this->info('Filament CMS was installed successfully.');
 

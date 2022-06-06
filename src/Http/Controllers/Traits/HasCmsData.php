@@ -4,9 +4,12 @@ namespace Phpsa\FilamentCms\Http\Controllers\Traits;
 
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\ValidationException;
+use Phpsa\FilamentCms\Http\Livewire\CmsPageView;
+use Phpsa\FilamentCms\Http\Livewire\CmsContentPageData;
 use Phpsa\FilamentCms\Models\CmsContentPages;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
@@ -25,7 +28,9 @@ trait HasCmsData
 
     public function resolveRouteBinding(string $page): CmsContentPages
     {
-        return CmsContentPages::whereSlug($page)->whereNamespace($this->resource)->firstOrFail();
+        $model = resolve(CmsContentPages::class)->resolveRouteBinding($page, 'slug');
+        abort_if($model === null || $model->namespace !== $this->resource, '404', 'Resource not found');
+        return $model;
     }
 
     /**
@@ -54,11 +59,11 @@ trait HasCmsData
 
     protected function viewData(CmsContentPages $page): array
     {
+
         return [
-            'page'  => $page,
+            'page' => method_exists($this, 'processPageBuilder') ? $this->processPageBuilder($page) : $page
         ];
     }
-
 
     protected function authorisePage(CmsContentPages $page): void
     {
@@ -77,11 +82,15 @@ trait HasCmsData
             AuthenticationException::class
         );
 
+        if (! $isRoleProtected) {
+            return;
+        }
+
         /** @var User $user */
         $user = auth()->user();
 
         throw_if(
-            $isRoleProtected && ! $user->hasAnyRole($page->security['roles']),
+            ! $user->hasAnyRole($page->security['roles']),
             UnauthorizedException::forRolesOrPermissions((array)$page->security['roles'])
         );
     }

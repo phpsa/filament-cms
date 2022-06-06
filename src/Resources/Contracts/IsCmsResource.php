@@ -8,7 +8,7 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Section;
-use Phpsa\FilamentCms\Builders\Simple;
+use Phpsa\FilamentCms\Components\PageBuilders\SimplePageBuilder;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
 use Phpsa\FilamentCms\Components\Fields\CmsStatus;
@@ -77,7 +77,7 @@ trait IsCmsResource
     public static function formPageBuilder(string $field): Builder
     {
         $type = class_basename(get_called_class());
-        $use = config('filament-cms.builders.' . $type, config('filament-cms.builders.default', Simple::class));
+        $use = config('filament-cms.builders.' . $type, config('filament-cms.builders.default', SimplePageBuilder::class));
         return $use::make($field);
     }
 

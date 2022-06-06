@@ -1,16 +1,16 @@
 <?php
 
-namespace Phpsa\FilamentCms\Blocks;
+namespace Phpsa\FilamentCms\Components\Blocks;
 
-use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Builder\Block;
 use Phpsa\FilamentCms\Components\Fields\RichTextEditor;
 
-class RichText
+class RichTextBlock
 {
-    public static function make($field): Block
+    public static function make(string $label): Block
     {
-        return Block::make($field)
+        return Block::make("Html")
+            ->label($label)
             ->schema([
                 RichTextEditor::make('content'),
             ])->columnSpan(2);

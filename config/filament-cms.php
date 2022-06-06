@@ -20,8 +20,8 @@ return [
         \Phpsa\FilamentCms\Resources\MediaResource::class,
     ],
     'builders' => [
-        'default' => \Phpsa\FilamentCms\Builders\Simple::class,
-        'BlogPostResource' =>  \Phpsa\FilamentCms\Builders\BlogPost::class,
+        'default' => \Phpsa\FilamentCms\Components\PageBuilders\SimplePageBuilder::class,
+        'BlogPostResource' =>  \Phpsa\FilamentCms\Components\PageBuilders\SimplePageBuilder::class,
     ],
     'media' => [
         'driver' => 'gd', //gd or imagick
