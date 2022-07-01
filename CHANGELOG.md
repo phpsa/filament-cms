@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/phpsa/filament-cms/compare/v2.1.0...v2.1.1) (2022-07-01)
+
+
+### Bug Fixes
+
+* defer to core version ([a30ea24](https://github.com/phpsa/filament-cms/commit/a30ea2455ce0e20472afbb3a3b21adf5e147049a))
+
 # [2.1.0](https://github.com/phpsa/filament-cms/compare/v2.0.2...v2.1.0) (2022-06-06)
 
 
