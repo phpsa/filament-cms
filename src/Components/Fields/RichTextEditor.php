@@ -10,13 +10,19 @@ class RichTextEditor
     {
         $editorConfig = config('filament-cms.editor');
 
-        /** @var \Filament\Forms\Components\RichEditor $editor*/
-        return $editorConfig['class']::make($field)
+        $editorClass = $editorConfig['class'];
+        unset($editorConfig['class']);
+
+        return tap($editorClass::make($field)
             ->columnSpan(2)
             ->disableLabel()
-            ->required()
-            ->disableAllToolbarButtons($editorConfig['disableAllToolbarButtons'])
-            ->enableToolbarButtons($editorConfig['enabledToolbarButtons'])
-            ->disableToolbarButtons($editorConfig['disableToolbarButtons']);
+            ->required(), function($editor) use ($editorConfig) {
+                foreach($editorConfig as $callable => $value){
+                    if(method_exists($editor, $callable)){
+                        $editor->$callable($value);
+                    }
+                }
+            });
+
     }
 }

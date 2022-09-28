@@ -16,7 +16,7 @@ use Filament\Forms\Components\ViewField;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\Placeholder;
 use Phpsa\FilamentCms\Components\Fields\MediaUpload;
-use Phpsa\FilamentCms\Components\DateTimePlaceholder;
+use Phpsa\FilamentCms\Components\Fields\DateTimePlaceholder;
 use Phpsa\FilamentCms\Resources\MediaResource\EditMedia;
 use Phpsa\FilamentCms\Resources\MediaResource\ListMedia;
 use Phpsa\FilamentCms\Resources\MediaResource\CreateMedia;
