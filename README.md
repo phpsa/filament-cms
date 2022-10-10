@@ -18,6 +18,10 @@ composer require phpsa/filament-cms
 php artisan filament-cms:install
 ```
 
+```
+php artisan migrate
+```
+
 ## Routes
 
 ```
