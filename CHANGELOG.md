@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/phpsa/filament-cms/compare/v2.1.1...v2.1.2) (2022-10-24)
+
+
+### Bug Fixes
+
+* Editor Configruations ([80214f6](https://github.com/phpsa/filament-cms/commit/80214f66ca1f5167654aed41ac891bc4452fb375))
+
 ## [2.1.1](https://github.com/phpsa/filament-cms/compare/v2.1.0...v2.1.1) (2022-07-01)
 
 
