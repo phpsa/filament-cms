@@ -7,14 +7,18 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Filament\Commands\Concerns\CanValidateInput;
 use Filament\Commands\Concerns\CanManipulateFiles;
-use Filament\Commands\Concerns\CanGenerateResources;
+use Filament\Forms\Commands\Concerns\CanGenerateForms;
+use Filament\Support\Commands\Concerns\CanReadModelSchemas;
+use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Phpsa\FilamentCms\Resources\Resource\Pages\EditRecord;
 use Phpsa\FilamentCms\Resources\Resource\Pages\ListRecords;
 use Phpsa\FilamentCms\Resources\Resource\Pages\CreateRecord;
 
 class MakeResourceCommand extends Command
 {
-    use CanGenerateResources;
+    use CanGenerateForms;
+    use CanGenerateTables;
+    use CanReadModelSchemas;
     use CanManipulateFiles;
     use CanValidateInput;
 
@@ -49,11 +53,12 @@ class MakeResourceCommand extends Command
         $editResourcePageClass = "Edit{$modelClass}";
         $viewResourcePageClass = "View{$modelClass}";
 
-        $baseResourcePath = app_path(
-            (string) Str::of($resource)
-                ->prepend('Filament\\Resources\\')
-                ->replace('\\', '/'),
-        );
+        $baseResourcePath =
+        (string) Str::of($resource)
+            ->prepend('/')
+            ->prepend($path)
+            ->replace('\\', '/')
+            ->replace('//', '/');
 
         $resourcePath = "{$baseResourcePath}.php";
         $resourcePagesDirectory = "{$baseResourcePath}/Pages";
