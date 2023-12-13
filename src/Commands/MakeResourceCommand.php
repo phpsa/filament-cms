@@ -19,8 +19,9 @@ class MakeResourceCommand extends Command
     use CanGenerateForms;
     use CanGenerateTables;
     use CanReadModelSchemas;
-    use CanManipulateFiles;
-    use CanValidateInput;
+
+ //   use CanManipulateFiles;
+ //   use CanValidateInput;
 
     protected $description = 'Creates a Filament CMS resource class and default page classes.';
 

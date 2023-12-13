@@ -6,11 +6,10 @@ use Spatie\Tags\HasTags;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * Phpsa\FilamentCms\Models\CmsContentPages
@@ -32,7 +31,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection|CmsContentPages[] $parents
  * @property-read int|null $parents_count
- * @property-read \RalphJSmit\Laravel\SEO\Models\SEO|null $seo
  * @property \Illuminate\Database\Eloquent\Collection|\Spatie\Tags\Tag[] $tags
  * @property-read int|null $tags_count
  * @method static Builder|CmsContentPages newModelQuery()
@@ -63,7 +61,6 @@ class CmsContentPages extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use HasSEO;
     use HasTags;
 
     protected $fillable = [
@@ -91,14 +88,19 @@ class CmsContentPages extends Model
     ];
 
 
-    public function parents(): HasMany
+    public function parent(): HasOne
     {
-        return $this->hasMany(CmsContentPages::class, 'id', 'parent_id')->with('nodes');
+        return $this->hasOne(CmsContentPages::class, 'id', 'parent_id');
     }
 
     public function children(): HasMany
     {
         return $this->hasMany(CmsContentPages::class, 'parent_id', 'id')->with('nodes');
+    }
+
+    public function seo(): HasOne
+    {
+        return $this->hasOne(CmsSeo::class, 'cms_content_pages_id', 'id');
     }
 
     /**

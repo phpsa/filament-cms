@@ -5,7 +5,7 @@ namespace Phpsa\FilamentCms;
 use Livewire\Livewire;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
-use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -24,7 +24,7 @@ use Phpsa\FilamentCms\Components\Forms\MediaPickerModal;
 use Phpsa\FilamentCms\Commands\MakeResourceCommand;
 use Phpsa\FilamentCms\Resources\CategoriesResource;
 
-class FilamentCmsProvider extends PluginServiceProvider
+class FilamentCmsProvider extends PackageServiceProvider
 {
     public static string $name = 'filament-cms';
 
@@ -48,14 +48,13 @@ class FilamentCmsProvider extends PluginServiceProvider
             ->hasCommand(MakeResourceCommand::class)
             ->hasMigrations([
                 'create_cms_content_pages_table',
-                'create_cms_media_table'
+                'create_cms_seo_table'
             ]); //->hasViews()->hasConfigFile();
     }
 
 
     protected function registerMacros(): void
     {
-
         Select::macro(
             'fromCmsResource',
             /** @phpstan-ignore-next-line */
@@ -63,34 +62,5 @@ class FilamentCmsProvider extends PluginServiceProvider
                 CmsContentPages::whereIn('namespace', (array) $relations)->pluck('name', 'id')->toArray()
             )
         );
-
-        Livewire::component('media-picker-modal', MediaPickerModal::class);
-        Livewire::component('create-media-form', CreateMediaForm::class);
-
-        self::addResourceToNavigation('Cms Page', PagesResource::class);
-        self::addResourceToNavigation('Cms Category', CategoriesResource::class);
-        self::addResourceToNavigation('Cms BlogPost', BlogPostResource::class);
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param string $type
-     * @param class-string $namespace
-     *
-     * @return void
-     */
-    public static function addResourceToNavigation(string $type, string $namespace): void
-    {
-        if (class_exists(\RyanChandler\FilamentNavigation\Facades\FilamentNavigation::class)) {
-            \RyanChandler\FilamentNavigation\Facades\FilamentNavigation::addItemType($type, [
-                Hidden::make('route')->dehydrateStateUsing(fn () => Str::of($namespace)->replace("\\", "")->snake(".")),
-
-                Select::make('slug')->label($type)
-                ->options(
-                    fn() =>  CmsContentPages::whereNamespace($namespace)->pluck('name', 'slug')
-                )
-            ]);
-        }
     }
 }
